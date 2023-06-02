@@ -132,6 +132,7 @@ export function computeDrop(args: Args): ComputedDrop {
   const { node, nextNode, prevNode } = args;
   const [above, below] = getNodesAroundCursor(node, prevNode, nextNode, hover);
 
+  console.log(`node: ${node.data.name}, above: ${above?.data.name}, below: ${below?.data.name}`);
   /* Hovering over the middle of a folder */
   if (node && node.isInternal && hover.inMiddle) {
     return {
@@ -148,18 +149,9 @@ export function computeDrop(args: Args): ComputedDrop {
     };
   }
 
-  /* The above node is an item or a closed folder */
-  if (isItem(above) || isClosed(above)) {
-    const level = getDropLevel(hover, above, below, args.indent);
-    return {
-      drop: walkUpFrom(above, level),
-      cursor: lineCursor(above.rowIndex! + 1, level),
-    };
-  }
-
-  /* The above node is an open folder */
+  const level = getDropLevel(hover, above, below, args.indent);
   return {
-    drop: dropAt(above?.id, 0),
-    cursor: lineCursor(above.rowIndex! + 1, above.level + 1),
+    drop: walkUpFrom(above, level),
+    cursor: lineCursor(above.rowIndex! + 1, level),
   };
 }
